@@ -1,0 +1,36 @@
+<div class="timeline">
+  <div class="hours">
+    <div class="hour" *ngFor="let hour of hours">{{ hour }}</div>
+  </div>
+  <div class="timeline-track" #timelineTrack>
+    <!-- Bloques de tiempo dinámicos según timeRanges -->
+    <div
+      *ngFor="let range of timeRanges"
+      class="time-block"
+      [ngStyle]="{ width: range.width, left: range.left }"
+    >
+      <!-- {{ range.startTime }} - {{ range.endTime }} -->
+    </div>
+
+    <!-- Caja de selección con manejas de redimensionado -->
+    <div class="selection-box" #selectionBox>
+      <span class="resize-handle left"></span>
+      <span class="resize-handle right"></span>
+    </div>
+  </div>
+
+  <div class="duration-label" #durationLabel></div>
+</div>
+
+<!-- Botón para confirmar selección -->
+<button
+  (click)="calculateSelectedRange()"
+  [disabled]="!isRangeAvailable"
+  class="confirm-button"
+>
+ Continuar
+</button>
+
+<div *ngIf="!isRangeAvailable" class="error-message">
+  Movimiento inválido. No existe video en el rango seleccionado.
+</div>

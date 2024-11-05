@@ -1,0 +1,54 @@
+
+::ng-deep .slider-container .ngx-slider {
+  height: 45px;
+  z-index: 1;
+}
+
+::ng-deep .slider-container .ngx-slider .ngx-slider-bubble {
+  cursor: default;
+  bottom: 52px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Estilos para el contenedor del slider y la barra */
+::ng-deep .slider-container .ngx-slider .ngx-slider-bar {
+  // height: 10px; ;
+  background: linear-gradient(
+    to right,
+    #e6e6e6 0%,
+    #d4d4d4 20%,
+    #e6e6e6 40%,
+    #d4d4d4 60%,
+    #e6e6e6 80%
+  );
+  z-index: 0;
+}
+
+/*linea de seleccion*/
+::ng-deep .slider-container .ngx-slider .ngx-slider-selection {
+  background: transparent;
+  border-bottom: #ffd700 solid 2px;
+  border-top: #ffd700 solid 2px;
+  height: 40px;
+}
+
+::ng-deep .slider-container .ngx-slider .ngx-slider-pointer {
+  cursor: pointer;
+  width: 15px;
+  height: 44px;
+  top: unset;
+  background-color: #ffd700;
+}
+
+::ng-deep .slider-container .ngx-slider .ngx-slider-pointer:after {
+  width: 4px;
+  height: 34px;
+  top: 5px;
+  left: 5px;
+}
+.slider-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+}

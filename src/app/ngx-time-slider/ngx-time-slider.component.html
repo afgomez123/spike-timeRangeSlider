@@ -1,0 +1,14 @@
+<div class="slider-container">
+  <ngx-slider
+    #slider
+    [(value)]="value"
+    [(highValue)]="highValue"
+    [options]="options"
+    [ngStyle]="{ 'background': getSliderBackground() }"
+    [ngClass]="{ 'within-range': isWithinPreselectedRange() }"
+    (valueChange)="checkRangeValidity()"
+  ></ngx-slider>
+  <div class="slider-label" #label>
+    {{ calculateRangeInMinutes() }} min
+  </div>
+</div>

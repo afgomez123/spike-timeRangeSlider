@@ -1,0 +1,170 @@
+/* timeline.component.css */
+
+/* Contenedor principal */
+.timeline {
+  width: 100%;
+  margin: 20px auto;
+  position: relative;
+  font-family: Arial, sans-serif;
+}
+
+/* Contenedor de las horas */
+.hours {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+/* Estilos de cada hora */
+.hour {
+  position: relative;
+  text-align: center;
+}
+
+/* Agregar un sombrerito encima de cada hora */
+.hour::before {
+  content: '';
+  position: absolute;
+  top: -5px; /* Ajuste para controlar la altura del sombrerito */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 3px;
+  background-color: #666; /* Color del sombrerito */
+}
+
+/* Pista de tiempo (background de la línea) */
+.timeline-track {
+  position: relative;
+  height: 40px;
+  background: linear-gradient(
+    to right,
+    #e6e6e6 0%,
+    #d4d4d4 20%,
+    #e6e6e6 40%,
+    #d4d4d4 60%,
+    #e6e6e6 80%
+  );
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Bloques de tiempo azules en la pista de tiempo */
+.time-block {
+  position: absolute;
+  height: 100%;
+  background-color: #b3d7ff;
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+/* Marcas de tiempo individuales */
+.time-marker {
+  font-size: 8px;
+  color: #666;
+  position: relative;
+  text-align: center;
+}
+
+.time-marker.major::before {
+  content: '-';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 10px; /* Línea más larga para las horas mayores */
+  background-color: red;
+  border-radius: 1px;
+}
+
+/* Marca menor */
+.time-marker.minor::before {
+  content: '-';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 5px; /* Línea más corta para las divisiones menores */
+  background-color: red;
+  border-radius: 1px;
+}
+
+/* Cuadro amarillo */
+.selection-box {
+  position: absolute;
+  left: 20px;
+  width: 40px;
+  height: 34px;
+  background-color: transparent;
+  border: 3px solid #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  cursor: move;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.selection-box.invalid {
+  border-color: black; /* Borde rojo para indicar error */
+}
+
+.error-message {
+  margin-top: 10px;
+  color: red;
+  font-size: 12px;
+}
+
+/* Manijas de redimensionado */
+.resize-handle {
+  width: 3px;
+  height: 29px;
+  background-color: #fff;
+  border: 3px solid #ffd700;
+  border-radius: 4px 29px 20px -10px;
+  cursor: ew-resize;
+}
+
+/* Duración en minutos bajo el cuadro */
+.duration-label {
+  bottom: -25px;
+  position: absolute;
+  font-size: 10px;
+  color: #666;
+  background-color: #fff;
+  padding: 2px 5px;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.confirm-button {
+  display: flex;
+  height: var(--Icon-Extra-large, 48px);
+  padding: var(--16, 16px) var(--24, 24px);
+  justify-content: center;
+  align-items: center;
+  gap: var(--8, 8px);
+  color:#e6e6e6;
+  border-radius: 20px;
+  border: 2px solid #4080F8;
+  background:  #4080F8;
+  cursor: pointer;
+  transform: scale(0.8);
+}
+
+.confirm-button:disabled {
+  background-color: #ccc;
+  border: 2px solid #ccc;
+  cursor: not-allowed;
+}
+
+
+
+/* Estilo del manejador cuando está dentro del rango preseleccionado */
+.within-range .ngx-slider-pointer {
+  background-color: #b3d7ff; /* Cambia el color cuando está dentro del rango */
+}

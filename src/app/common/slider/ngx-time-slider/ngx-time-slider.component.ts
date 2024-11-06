@@ -56,10 +56,10 @@ isWithinPreselectedRange(): boolean {
     const rangeStart = this.convertTimeToDecimal(range.startTime) * 60;
     const rangeEnd = this.convertTimeToDecimal(range.endTime) * 60;
 
-    console.log('startMinutes', startMinutes);
-    console.log('endMinutes', endMinutes);
-    console.log('rangeStart', rangeStart);
-    console.log('rangeEnd', rangeEnd);
+    // console.log('startMinutes', startMinutes);
+    // console.log('endMinutes', endMinutes);
+    // console.log('rangeStart', rangeStart);
+    // console.log('rangeEnd', rangeEnd);
 
     // Verificar si cualquier parte del rango seleccionado cae dentro de un rango permitido
     return (startMinutes >= rangeStart);

@@ -51,7 +51,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   ngAfterViewInit() {
     this.setupDragAndResizeEvents();
     this.calculateTimeBlockPositions(); // Calcula posiciones con los bloques recibidos
-    // this.setInitialSelectionBoxPosition();
+    this.setInitialSelectionBoxPosition();
   }
 
   private setupDragAndResizeEvents() {
@@ -154,7 +154,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   }
 
   @HostListener('document:mousemove', ['$event'])
-  @HostListener('document:touchmove', ['$event'])
   onMouseMove(e: MouseEvent) {
     if (this.isDragging) {
       this.moveBox(e);
@@ -164,7 +163,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   }
 
   @HostListener('document:mouseup')
-  @HostListener('document:touchend')
   onMouseUp() {
     this.isDragging = false;
     this.isResizing = false;
@@ -180,36 +178,74 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
    * selection box and duration label accordingly. It also checks if the new range is available
    * and updates the visual indication of validity.
    */
+  //v2
   private moveBox(e: MouseEvent) {
     const newPosition = e.pageX - this.startX;
     const maxLeft =
       this.timelineTrack.nativeElement.offsetWidth -
-      this.selectionBox.nativeElement.offsetWidth; //Le reste 5 para mejorar la precisión
+      this.selectionBox.nativeElement.offsetWidth;
 
     const constrainedPosition = Math.min(Math.max(newPosition, 0), maxLeft);
 
-    // Verificar disponibilidad
     this.isRangeAvailable = this.checkRangeAvailability(
       constrainedPosition,
       this.selectionBox.nativeElement.offsetWidth
     );
 
-    // Actualizar estilos
     this.selectionBox.nativeElement.style.left = `${constrainedPosition}px`;
-    // this.durationLabel.nativeElement.style.left = `${constrainedPosition}px`;
     this.durationLabel.nativeElement.style.left = `${
       constrainedPosition + this.selectionBox.nativeElement.offsetWidth / 2 - 20
     }px`;
 
-    // Actualizar duración
     this.updateDurationLabel();
 
     if (this.isRangeAvailable) {
       this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
+      this.selectionBox.nativeElement
+        .querySelectorAll('.resize-handle')
+        .forEach((handle: HTMLElement) => {
+          this.renderer.removeClass(handle, 'invalid');
+        });
     } else {
       this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
+      this.selectionBox.nativeElement
+        .querySelectorAll('.resize-handle')
+        .forEach((handle: HTMLElement) => {
+          this.renderer.addClass(handle, 'invalid');
+        });
     }
-  }
+}
+
+  //v1
+  // private moveBox(e: MouseEvent) {
+  //   const newPosition = e.pageX - this.startX;
+  //   const maxLeft =
+  //     this.timelineTrack.nativeElement.offsetWidth -
+  //     this.selectionBox.nativeElement.offsetWidth; //Le reste 5 para mejorar la precisión
+
+  //   const constrainedPosition = Math.min(Math.max(newPosition, 0), maxLeft);
+
+  //   // Verificar disponibilidad
+  //   this.isRangeAvailable = this.checkRangeAvailability(
+  //     constrainedPosition,
+  //     this.selectionBox.nativeElement.offsetWidth
+  //   );
+
+  //   // Actualizar estilos
+  //   this.selectionBox.nativeElement.style.left = `${constrainedPosition}px`;
+  //   this.durationLabel.nativeElement.style.left = `${
+  //     constrainedPosition + this.selectionBox.nativeElement.offsetWidth / 2 - 20
+  //   }px`;
+
+  //   // Actualizar duración
+  //   this.updateDurationLabel();
+
+  //   if (this.isRangeAvailable) {
+  //     this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
+  //   } else {
+  //     this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
+  //   }
+  // }
 
   /**
    * Handles the resizing of the selection box based on mouse events.
@@ -222,7 +258,9 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
    * The method also checks the availability of the selected range and updates the duration label accordingly.
    * If the range is not available, it adds an 'invalid' class to the selection box.
    */
-  resizeBox(e: MouseEvent) {
+
+  //v2
+  private resizeBox(e: MouseEvent) {
     let newWidth: number;
     let newLeft: number;
 
@@ -248,7 +286,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       }
     }
 
-    // Verificar disponibilidad y actualizar duración
     this.isRangeAvailable = this.checkRangeAvailability(newLeft, newWidth);
     this.durationLabel.nativeElement.style.left = `${
       newLeft + newWidth / 2 - 20
@@ -257,10 +294,62 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
     if (this.isRangeAvailable) {
       this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
+      this.selectionBox.nativeElement
+        .querySelectorAll('.resize-handle')
+        .forEach((handle: HTMLElement) => {
+          this.renderer.removeClass(handle, 'invalid');
+        });
     } else {
       this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
+      this.selectionBox.nativeElement
+        .querySelectorAll('.resize-handle')
+        .forEach((handle: HTMLElement) => {
+          this.renderer.addClass(handle, 'invalid');
+        });
     }
-  }
+}
+
+
+  //v1
+  // resizeBox(e: MouseEvent) {
+  //   let newWidth: number;
+  //   let newLeft: number;
+
+  //   if (this.isLeftHandle) {
+  //     const delta = this.startX - e.pageX;
+  //     newWidth = Math.max(30, this.startWidth + delta);
+  //     newLeft = Math.max(0, this.startLeft - delta);
+
+  //     if (newLeft + newWidth <= this.timelineTrack.nativeElement.offsetWidth) {
+  //       this.selectionBox.nativeElement.style.width = `${newWidth}px`;
+  //       this.selectionBox.nativeElement.style.left = `${newLeft}px`;
+  //     }
+  //   } else {
+  //     const delta = e.pageX - this.startX;
+  //     newWidth = Math.max(30, this.startWidth + delta);
+  //     newLeft = this.startLeft;
+
+  //     if (
+  //       this.startLeft + newWidth <=
+  //       this.timelineTrack.nativeElement.offsetWidth
+  //     ) {
+  //       this.selectionBox.nativeElement.style.width = `${newWidth}px`;
+  //     }
+  //   }
+
+  //   // Verificar disponibilidad y actualizar duración
+  //   this.isRangeAvailable = this.checkRangeAvailability(newLeft, newWidth);
+  //   this.durationLabel.nativeElement.style.left = `${
+  //     newLeft + newWidth / 2 - 20
+  //   }px`;
+  //   this.updateDurationLabel();
+
+  //   if (this.isRangeAvailable) {
+  //     this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
+  //   } else {
+  //     this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
+  //   }
+  // }
 
   // Nueva
   private checkRangeAvailability(newLeft: number, width: number): boolean {

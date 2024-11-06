@@ -109,8 +109,13 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
+// Validations
 .selection-box.invalid {
-  border-color: black; /* Borde rojo para indicar error */
+  border: 3px solid #4080F8;
+}
+
+.selection-box.invalid .resize-handle {
+  border-color: #4080F8;
 }
 
 .error-message {
@@ -118,6 +123,7 @@
   color: red;
   font-size: 12px;
 }
+// end validations
 
 /* Manijas de redimensionado */
 .resize-handle {
@@ -128,6 +134,7 @@
   border-radius: 4px 29px 20px -10px;
   cursor: ew-resize;
 }
+
 
 /* Duración en minutos bajo el cuadro */
 .duration-label {

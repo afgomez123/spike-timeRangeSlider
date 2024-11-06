@@ -1,5 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { Options, LabelType } from '@angular-slider/ngx-slider';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',

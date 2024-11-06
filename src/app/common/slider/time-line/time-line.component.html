@@ -1,3 +1,14 @@
+<section style="display: flex; flex-direction: row; align-items: flex-end; margin-bottom: 10px;">
+  <span class="range-time-selection">Elige el rango de tiempo:</span>
+  <div
+    class="time-range"
+    [ngClass]="{ 'time-range-is-no-available': !isRangeAvailable }"
+  >
+    <span
+      >Rango seleccionado: <strong>{{ selectedRange }}</strong></span
+    >
+  </div>
+</section>
 <div class="timeline">
   <div class="hours">
     <div class="hour" *ngFor="let hour of hours">{{ hour }}</div>
@@ -28,7 +39,7 @@
   [disabled]="!isRangeAvailable"
   class="confirm-button"
 >
- Continuar
+  Continuar
 </button>
 
 <div *ngIf="!isRangeAvailable" class="error-message">

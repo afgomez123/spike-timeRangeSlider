@@ -1,19 +1,44 @@
 /* timeline.component.css */
+// Variables de colores
+$color-gray: #666;
+$color-red: red;
+$color-yellow: #ffd700;
+$color-blue: #4080f8;
+$color-light-blue: #b3d7ff;
+$color-light-gray: #e6e6e6;
+$color-dark-gray: #d4d4d4;
+$color-orange: #f57c00;
+$color-dark-blue: #4a90e2;
+$color-light-orange: #fff7e4;
 
+// Variables de fuentes
+$font-primary: Arial, sans-serif;
+$font-secondary: Roboto;
+
+// Variables de tamaños de fuente
+$font-size-small: 10px;
+$font-size-medium: 16px;
+
+// Variables de bordes
+$border-thick: 3px solid;
+$border-thin: 2px solid;
+
+// Variables de sombra
+$box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.4);
 /* Contenedor principal */
 .timeline {
   width: 100%;
   margin: 20px auto;
   position: relative;
-  font-family: Arial, sans-serif;
+  font-family: $font-primary;
 }
 
 /* Contenedor de las horas */
 .hours {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  color: #666;
+  font-size: $font-size-small;
+  color: $color-gray;
   margin-bottom: 5px;
 }
 
@@ -25,14 +50,14 @@
 
 /* Agregar un sombrerito encima de cada hora */
 .hour::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -5px; /* Ajuste para controlar la altura del sombrerito */
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
   height: 3px;
-  background-color: #666; /* Color del sombrerito */
+  background-color: $color-gray; /* Color del sombrerito */
 }
 
 /* Pista de tiempo (background de la línea) */
@@ -41,11 +66,11 @@
   height: 40px;
   background: linear-gradient(
     to right,
-    #e6e6e6 0%,
-    #d4d4d4 20%,
-    #e6e6e6 40%,
-    #d4d4d4 60%,
-    #e6e6e6 80%
+    $color-light-gray 0%,
+    $color-dark-gray 20%,
+    $color-light-gray 40%,
+    $color-dark-gray 60%,
+    $color-light-gray 80%
   );
   border-radius: 8px;
   overflow: hidden;
@@ -55,7 +80,7 @@
 .time-block {
   position: absolute;
   height: 100%;
-  background-color: #b3d7ff;
+  background-color: $color-light-blue;
   border-radius: 8px;
   margin: 0 2px;
 }
@@ -63,33 +88,33 @@
 /* Marcas de tiempo individuales */
 .time-marker {
   font-size: 8px;
-  color: #666;
+  color: $color-gray;
   position: relative;
   text-align: center;
 }
 
 .time-marker.major::before {
-  content: '-';
+  content: "-";
   position: absolute;
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
   height: 10px; /* Línea más larga para las horas mayores */
-  background-color: red;
+  background-color: $color-red;
   border-radius: 1px;
 }
 
 /* Marca menor */
 .time-marker.minor::before {
-  content: '-';
+  content: "-";
   position: absolute;
   top: -8px;
   left: 50%;
   transform: translateX(-50%);
   width: 1px;
   height: 5px; /* Línea más corta para las divisiones menores */
-  background-color: red;
+  background-color: $color-red;
   border-radius: 1px;
 }
 
@@ -100,27 +125,27 @@
   width: 40px;
   height: 34px;
   background-color: transparent;
-  border: 3px solid #ffd700;
+  border: $border-thick $color-yellow;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-radius: 8px;
   cursor: move;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.4);
+  box-shadow: $box-shadow-default;
 }
 
 // Validations
 .selection-box.invalid {
-  border: 3px solid #4080F8;
+  border: $border-thick $color-blue;
 }
 
 .selection-box.invalid .resize-handle {
-  border-color: #4080F8;
+  border-color: $color-blue;
 }
 
 .error-message {
   margin-top: 10px;
-  color: red;
+  color: $color-red;
   font-size: 12px;
 }
 // end validations
@@ -130,18 +155,17 @@
   width: 3px;
   height: 29px;
   background-color: #fff;
-  border: 3px solid #ffd700;
+  border: $border-thick $color-yellow;
   border-radius: 4px 29px 20px -10px;
   cursor: ew-resize;
 }
-
 
 /* Duración en minutos bajo el cuadro */
 .duration-label {
   bottom: -25px;
   position: absolute;
-  font-size: 10px;
-  color: #666;
+  font-size: $font-size-small;
+  color: $color-gray;
   background-color: #fff;
   padding: 2px 5px;
   border-radius: 3px;
@@ -155,23 +179,55 @@
   justify-content: center;
   align-items: center;
   gap: var(--8, 8px);
-  color:#e6e6e6;
+  color: $color-light-gray;
   border-radius: 20px;
-  border: 2px solid #4080F8;
-  background:  #4080F8;
+  border: $border-thin $color-blue;
+  background: $color-blue;
   cursor: pointer;
   transform: scale(0.8);
 }
 
 .confirm-button:disabled {
   background-color: #ccc;
-  border: 2px solid #ccc;
+  border: $border-thin #ccc;
   cursor: not-allowed;
 }
 
-
-
 /* Estilo del manejador cuando está dentro del rango preseleccionado */
 .within-range .ngx-slider-pointer {
-  background-color: #b3d7ff; /* Cambia el color cuando está dentro del rango */
+  background-color: $color-light-blue; /* Cambia el color cuando está dentro del rango */
+}
+
+.time-range {
+  margin-top: 50px;
+  background-color: #e6f3ff;
+  border-radius: 28px;
+  padding: 5px 15px;
+  font-size: $font-size-medium;
+  color: $color-dark-blue;
+}
+
+.time-range-is-no-available {
+  background-color: $color-light-orange;
+  color: $color-orange;
+}
+
+.time-range strong {
+  font-weight: bold;
+}
+
+// no es parte del componente se puede poner global
+.range-time-selection {
+  color: #14328f;
+  text-align: center;
+  font-feature-settings: "liga" off, "clig" off;
+  /* Desktop/Body/Medium Regular */
+  font-family: $font-secondary;
+  font-size: $font-size-medium;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: 0.5px;
+  margin-bottom: 5px; // borrar despues de implemntar el componente
+  padding-right: 40px;
 }

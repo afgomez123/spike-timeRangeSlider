@@ -1,0 +1,46 @@
+.slider-container-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+// titulo o label del slider
+.slider-label-line {
+  font-size: 16px;
+  color: #14328f;
+  margin-bottom: 8px;
+}
+
+// Estilos del mat-custom slider
+.custom-slider {
+  width: 80%;
+}
+
+// Espacio entre los numeros del slider
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  color: #666;
+  font-size: 10px;
+}
+
+// posicion de los numeros del slider
+.slider-ticks span {
+  position: relative;
+  top: -5px;
+}
+
+// Raya de los numero del slider
+.slider-ticks span::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px; // Grosor del palito
+  height: 5px; // Altura del palito
+  background-color: #666;
+}

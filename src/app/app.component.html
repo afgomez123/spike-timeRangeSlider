@@ -2,26 +2,22 @@
   <span>Hello My Custom TimeRangeSlider</span>
 </h1>
 
-  <app-time-line style="width: 100%;"
+<section style="padding: 20px">
+  <app-line-slider></app-line-slider>
+
+  <app-time-line
+    style="width: 100%"
     [startHour]="13"
     [endHour]="14"
     [interval]="5"
-    [timeRanges]="[{ startTime: '13:10', endTime: '13:20' },{ startTime: '13:30', endTime: '13:45' }]"
+    [timeRanges]="[
+      { startTime: '13:05', endTime: '13:15' },
+      { startTime: '13:20', endTime: '13:32' },
+      { startTime: '13:40', endTime: '13:55' }
+    ]"
   >
   </app-time-line>
-
-
-<section style="margin-top: 100px; position: relative;">
-  <app-ngx-time-slider></app-ngx-time-slider>
 </section>
-
-
-
-
-
-
-
-
-
-
-
+<!-- <section style="margin-top: 100px; position: relative;">
+  <app-ngx-time-slider></app-ngx-time-slider>
+</section> -->

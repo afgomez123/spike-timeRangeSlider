@@ -36,7 +36,7 @@ export class LineSliderComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((message: string) => {
         // Update the selected value only if it differs from the received message
-        if (this.selelectedValue?.value !== message) {
+        if (message && this.selelectedValue?.value !== message) {
           this.selelectedValue?.setValue(message);
         }
         console.log("Message received in TimeLineComponent:", message);

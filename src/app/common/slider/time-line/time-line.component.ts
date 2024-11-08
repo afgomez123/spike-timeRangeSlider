@@ -9,6 +9,7 @@ import {
   HostListener,
 } from "@angular/core";
 import { SharedTimeRangeService } from "../shared-time-range.service";
+import { Subject, take, takeUntil } from "rxjs";
 
 interface TimeRange {
   startTime: string;
@@ -42,7 +43,10 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   hours: string[] = [];
 
-  selectedRange: string = "";
+  private unsubscribe$ = new Subject<void>();
+
+  public selectedRange: string = "";
+  public duration: number = 0;
 
   constructor(
     private renderer: Renderer2,
@@ -52,16 +56,63 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.generateHoursRange(); // Usa las propiedades configurables
 
-    this.sharedService.currentMessage.subscribe((message) => {
-      message;
-      console.log("Mensaje recibido en LineSliderComponent:", message);
-    });
+    this.sharedService.currentMessage
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((message) => {
+        // console.log("Mensaje recibido en LineSliderComponent:", message);
+
+        if(message && message !== this.duration.toString()) {
+          console.log("Mensaje recibido en LineSliderComponent: if", message+ '--'+ this.duration.toString());
+
+          const number = parseInt(message, 10); // Convierte el mensaje en un número
+          if (number >= 1 && number <= 10) {
+            this.resizeSelectionBoxByNumber(number); // Llama al método con el número
+          }
+
+        }
+
+      });
   }
+
+  //v1
+  private resizeSelectionBoxByNumber(number: number) {
+    const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
+    const minutesInTimeline = (this.endHour - this.startHour) * 60;
+
+    // Calcula el ancho en píxeles correspondiente al número dado
+    const newWidthInMinutes = number; // Número de minutos para redimensionar
+    const newWidthInPixels = (newWidthInMinutes / minutesInTimeline) * timelineWidth;
+
+    // Obtén la posición actual del selection box
+    const currentLeft = this.selectionBox.nativeElement.offsetLeft;
+    const maxWidth = timelineWidth - currentLeft + 5; // Máximo ancho permitido hacia la derecha
+
+    // Asegúrate de que el ancho no exceda el límite derecho de la línea de tiempo
+    const constrainedWidth = Math.min(newWidthInPixels, maxWidth);
+
+    // Aplica el nuevo ancho al selection box
+    this.renderer.setStyle(
+      this.selectionBox.nativeElement,
+      'width',
+      `${constrainedWidth}px`
+    );
+
+    // Actualiza la duración y el rango seleccionado
+    this.duration = Math.round(this.convertPixelsToMinutes(constrainedWidth));
+    this.updateDurationLabel();
+
+    const startTimeStr = this.convertPixelsToTime(currentLeft);
+    const endTimeStr = this.convertPixelsToTime(currentLeft + constrainedWidth);
+    const startTime = new Date(`1970-01-01T${startTimeStr}:00`);
+    const endTime = new Date(`1970-01-01T${endTimeStr}:00`);
+    this.updateSelectedRange(startTime, endTime);
+  }
+
 
   ngAfterViewInit() {
     this.setupDragAndResizeEvents();
     this.calculateTimeBlockPositions(); // Calcula posiciones con los bloques recibidos
-    this.setInitialSelectionBoxPosition();// inactiva provision
+    this.setInitialSelectionBoxPosition(); // inactiva provision
   }
 
   private setupDragAndResizeEvents() {
@@ -775,9 +826,10 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   //v1
   private updateDurationLabel() {
-    const duration = Math.round(this.calculateSelectionDuration());
-    this.durationLabel.nativeElement.innerText = `${duration} min`;
-    this.sharedService.changeMessage(duration.toString());
+     this.duration = Math.round(this.calculateSelectionDuration());
+
+    this.durationLabel.nativeElement.innerText = `${this.duration} min`;
+    this.sharedService.changeMessage(this.duration.toString());
   }
 
   // Método para actualizar la variable selectedRange con el formato de tiempo
@@ -796,5 +848,10 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     hours = hours ? hours : 12; // El "0" en formato de 12 horas se convierte en "12"
     const minutesStr = minutes < 10 ? "0" + minutes : minutes;
     return `${hours}:${minutesStr} ${ampm}`;
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

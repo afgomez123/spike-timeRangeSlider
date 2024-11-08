@@ -31,9 +31,39 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   margin: 20px auto;
   position: relative;
   font-family: $font-primary;
+  overflow-x: scroll; /* El scrollbar solo aparecerá si es necesario */
+  height: 120px;
+  }
+
+.timeline::-webkit-scrollbar {
+  height: 10px; /* Altura inicial del scrollbar: oculto */
+   transition: height 0.3s ease; /* Transición para mostrar el scrollbar */
+}
+
+.timeline:hover::-webkit-scrollbar {
+  height: 10px; /* Altura del scrollbar al pasar el mouse */
+}
+
+.timeline::-webkit-scrollbar-thumb {
+  background: #b3d7ff; /* Color del thumb */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.timeline::-webkit-scrollbar-thumb:hover {
+  background: #b3d7ff; /* Color del thumb */
+  border-radius: 10px; /* Bordes redondeados */
 }
 
 /* Contenedor de las horas */
+// .hours {
+//   display: flex;
+//   justify-content: space-between;
+//   font-size: $font-size-small;
+//   color: $color-gray;
+//   margin-bottom: 5px;
+//   width: 3000px; //esto deberia calcularse en base al  startHour , endHour e interval
+// }
+
 .hours {
   display: flex;
   justify-content: space-between;
@@ -61,6 +91,22 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
 }
 
 /* Pista de tiempo (background de la línea) */
+// .timeline-track {
+//   width: 3000px; //esto deberia calcularse en base al  startHour , endHour e interval
+//   position: relative;
+//   height: 40px;
+//   background: linear-gradient(
+//     to right,
+//     $color-light-gray 0%,
+//     $color-dark-gray 20%,
+//     $color-light-gray 40%,
+//     $color-dark-gray 60%,
+//     $color-light-gray 80%
+//   );
+//   border-radius: 8px;
+//   overflow: hidden;
+// }
+
 .timeline-track {
   position: relative;
   height: 40px;
@@ -162,7 +208,7 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
 
 /* Duración en minutos bajo el cuadro */
 .duration-label {
-  bottom: -25px;
+  bottom: 0px;
   position: absolute;
   font-size: $font-size-small;
   color: $color-gray;

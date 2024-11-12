@@ -33,6 +33,7 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   font-family: $font-primary;
   overflow-x: scroll; /* El scrollbar solo aparecerá si es necesario */
   height: 120px;
+  max-width: fit-content;
   }
 
 .timeline::-webkit-scrollbar {
@@ -52,17 +53,8 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
 .timeline::-webkit-scrollbar-thumb:hover {
   background: #b3d7ff; /* Color del thumb */
   border-radius: 10px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
 }
-
-/* Contenedor de las horas */
-// .hours {
-//   display: flex;
-//   justify-content: space-between;
-//   font-size: $font-size-small;
-//   color: $color-gray;
-//   margin-bottom: 5px;
-//   width: 3000px; //esto deberia calcularse en base al  startHour , endHour e interval
-// }
 
 .hours {
   display: flex;
@@ -88,24 +80,8 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   width: 1px;
   height: 5px;
   background-color: $color-gray; /* Color del sombrerito */
+  padding-top: 3px;
 }
-
-/* Pista de tiempo (background de la línea) */
-// .timeline-track {
-//   width: 3000px; //esto deberia calcularse en base al  startHour , endHour e interval
-//   position: relative;
-//   height: 40px;
-//   background: linear-gradient(
-//     to right,
-//     $color-light-gray 0%,
-//     $color-dark-gray 20%,
-//     $color-light-gray 40%,
-//     $color-dark-gray 60%,
-//     $color-light-gray 80%
-//   );
-//   border-radius: 8px;
-//   overflow: hidden;
-// }
 
 .timeline-track {
   position: relative;

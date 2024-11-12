@@ -55,22 +55,32 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.generateHoursRange(); // Usa las propiedades configurables
+    this.getShareLineSliderComponent();
+  }
 
+  ngAfterViewInit() {
+    this.calculateInitialWidthOfDiv(); //para que salga el scroll cuando pasa mas de 2horas de rango en la hora inicial y final
+    this.setupDragAndResizeEvents();
+    this.calculateTimeBlockPositions(); // Calcula posiciones con los bloques recibidos
+    this.setInitialSelectionBoxPosition(); // inactiva provision
+  }
+
+  private getShareLineSliderComponent() {
     this.sharedService.currentMessage
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((message) => {
-        // console.log("Mensaje recibido en LineSliderComponent:", message);
 
-        if(message && message !== this.duration.toString()) {
-          console.log("Mensaje recibido en LineSliderComponent: if", message+ '--'+ this.duration.toString());
+        if (message && message !== this.duration.toString()) {
+          console.log(
+            "Mensaje recibido en LineSliderComponent: if",
+            message + "--" + this.duration.toString()
+          );
 
           const number = parseInt(message, 10); // Convierte el mensaje en un número
           if (number >= 1 && number <= 10) {
             this.resizeSelectionBoxByNumber(number); // Llama al método con el número
           }
-
         }
-
       });
   }
 
@@ -81,7 +91,8 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
     // Calcula el ancho en píxeles correspondiente al número dado
     const newWidthInMinutes = number; // Número de minutos para redimensionar
-    const newWidthInPixels = (newWidthInMinutes / minutesInTimeline) * timelineWidth;
+    const newWidthInPixels =
+      (newWidthInMinutes / minutesInTimeline) * timelineWidth;
 
     // Obtén la posición actual del selection box
     const currentLeft = this.selectionBox.nativeElement.offsetLeft;
@@ -93,7 +104,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     // Aplica el nuevo ancho al selection box
     this.renderer.setStyle(
       this.selectionBox.nativeElement,
-      'width',
+      "width",
       `${constrainedWidth}px`
     );
 
@@ -108,11 +119,30 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     this.updateSelectedRange(startTime, endTime);
   }
 
+  private calculateTimelineWidth(): string {
+    const totalIntervals =
+      ((this.endHour - this.startHour) * 60) / this.interval;
+    const pixelsPerInterval = 65; // Ajusta el espacio entre intervalos aquí
+    const trackWidth = totalIntervals * pixelsPerInterval;
+    return `${trackWidth}px`;
+  }
 
-  ngAfterViewInit() {
-    this.setupDragAndResizeEvents();
-    this.calculateTimeBlockPositions(); // Calcula posiciones con los bloques recibidos
-    this.setInitialSelectionBoxPosition(); // inactiva provision
+  private calculateInitialWidthOfDiv() {
+    const trackWidth = this.calculateTimelineWidth();
+
+    // Aplica el ancho dinámico a la pista de tiempo
+    this.renderer.setStyle(
+      this.timelineTrack.nativeElement,
+      "width",
+      trackWidth
+    );
+
+    // Aplica el ancho dinámico al contenedor de horas
+    this.renderer.setStyle(
+      this.timelineTrack.nativeElement.previousElementSibling, // Contenedor de horas
+      "width",
+      trackWidth
+    );
   }
 
   private setupDragAndResizeEvents() {
@@ -204,7 +234,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
    *
    * @returns {void}
    */
-  calculateTimeBlockPositions(): void {
+  public calculateTimeBlockPositions(): void {
     this.timeRanges = this.timeRanges.map((range) => {
       const startPixels = this.convertTimeToPixels(range.startTime);
       const endPixels = this.convertTimeToPixels(range.endTime);
@@ -241,7 +271,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
    */
 
   //v3
-
   private moveBox(e: MouseEvent) {
     const newPosition = e.pageX - this.startX;
     const maxLeft =
@@ -294,75 +323,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
         });
     }
   }
-
-  //v2
-  //   private moveBox(e: MouseEvent) {
-  //     const newPosition = e.pageX - this.startX;
-  //     const maxLeft =
-  //       this.timelineTrack.nativeElement.offsetWidth -
-  //       this.selectionBox.nativeElement.offsetWidth;
-
-  //     const constrainedPosition = Math.min(Math.max(newPosition, 0), maxLeft);
-
-  //     this.isRangeAvailable = this.checkRangeAvailability(
-  //       constrainedPosition,
-  //       this.selectionBox.nativeElement.offsetWidth
-  //     );
-
-  //     this.selectionBox.nativeElement.style.left = `${constrainedPosition}px`;
-  //     this.durationLabel.nativeElement.style.left = `${
-  //       constrainedPosition + this.selectionBox.nativeElement.offsetWidth / 2 - 20
-  //     }px`;
-
-  //     this.updateDurationLabel();
-
-  //     if (this.isRangeAvailable) {
-  //       this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.removeClass(handle, 'invalid');
-  //         });
-  //     } else {
-  //       this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.addClass(handle, 'invalid');
-  //         });
-  //     }
-  // }
-
-  //v1
-  // private moveBox(e: MouseEvent) {
-  //   const newPosition = e.pageX - this.startX;
-  //   const maxLeft =
-  //     this.timelineTrack.nativeElement.offsetWidth -
-  //     this.selectionBox.nativeElement.offsetWidth; //Le reste 5 para mejorar la precisión
-
-  //   const constrainedPosition = Math.min(Math.max(newPosition, 0), maxLeft);
-
-  //   // Verificar disponibilidad
-  //   this.isRangeAvailable = this.checkRangeAvailability(
-  //     constrainedPosition,
-  //     this.selectionBox.nativeElement.offsetWidth
-  //   );
-
-  //   // Actualizar estilos
-  //   this.selectionBox.nativeElement.style.left = `${constrainedPosition}px`;
-  //   this.durationLabel.nativeElement.style.left = `${
-  //     constrainedPosition + this.selectionBox.nativeElement.offsetWidth / 2 - 20
-  //   }px`;
-
-  //   // Actualizar duración
-  //   this.updateDurationLabel();
-
-  //   if (this.isRangeAvailable) {
-  //     this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
-  //   } else {
-  //     this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
-  //   }
-  // }
 
   /**
    * Handles the resizing of the selection box based on mouse events.
@@ -450,158 +410,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     }
   }
 
-  //v3
-  //   private resizeBox(e: MouseEvent) {
-  //     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-  //     const minutesInTimeline = (this.endHour - this.startHour) * 60;
-
-  //     // Cálculo de los píxeles mínimos y máximos en función del intervalo de tiempo
-  //     const minTime = 1; // Mínimo tiempo en minutos permitido
-  //     const maxTime = 10; // Máximo tiempo en minutos permitido
-  //     const minWidthInPixels = (minTime / minutesInTimeline) * timelineWidth;
-  //     const maxWidthInPixels = (maxTime / minutesInTimeline) * timelineWidth;
-
-  //     let newWidth: number;
-  //     let newLeft: number;
-
-  //     if (this.isLeftHandle) {
-  //       const delta = this.startX - e.pageX;
-  //       newWidth = Math.max(minWidthInPixels, Math.min(this.startWidth + delta, maxWidthInPixels));
-  //       newLeft = Math.max(0, this.startLeft - delta);
-
-  //       if (newLeft + newWidth <= this.timelineTrack.nativeElement.offsetWidth) {
-  //         this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //         this.selectionBox.nativeElement.style.left = `${newLeft}px`;
-  //       }
-  //     } else {
-  //       const delta = e.pageX - this.startX;
-  //       newWidth = Math.max(minWidthInPixels, Math.min(this.startWidth + delta, maxWidthInPixels));
-  //       newLeft = this.startLeft;
-
-  //       if (
-  //         this.startLeft + newWidth <=
-  //         this.timelineTrack.nativeElement.offsetWidth
-  //       ) {
-  //         this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //       }
-  //     }
-
-  //     // Verificar disponibilidad y actualizar duración
-  //     this.isRangeAvailable = this.checkRangeAvailability(newLeft, newWidth);
-  //     this.durationLabel.nativeElement.style.left = `${
-  //       newLeft + newWidth / 2 - 20
-  //     }px`;
-  //     this.updateDurationLabel();
-
-  //     if (this.isRangeAvailable) {
-  //       this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.removeClass(handle, 'invalid');
-  //         });
-  //     } else {
-  //       this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.addClass(handle, 'invalid');
-  //         });
-  //     }
-  // }
-
-  //v2
-  //   private resizeBox(e: MouseEvent) {
-  //     let newWidth: number;
-  //     let newLeft: number;
-
-  //     if (this.isLeftHandle) {
-  //       const delta = this.startX - e.pageX;
-  //       newWidth = Math.max(30, this.startWidth + delta);
-  //       newLeft = Math.max(0, this.startLeft - delta);
-
-  //       if (newLeft + newWidth <= this.timelineTrack.nativeElement.offsetWidth) {
-  //         this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //         this.selectionBox.nativeElement.style.left = `${newLeft}px`;
-  //       }
-  //     } else {
-  //       const delta = e.pageX - this.startX;
-  //       newWidth = Math.max(30, this.startWidth + delta);
-  //       newLeft = this.startLeft;
-
-  //       if (
-  //         this.startLeft + newWidth <=
-  //         this.timelineTrack.nativeElement.offsetWidth
-  //       ) {
-  //         this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //       }
-  //     }
-
-  //     this.isRangeAvailable = this.checkRangeAvailability(newLeft, newWidth);
-  //     this.durationLabel.nativeElement.style.left = `${
-  //       newLeft + newWidth / 2 - 20
-  //     }px`;
-  //     this.updateDurationLabel();
-
-  //     if (this.isRangeAvailable) {
-  //       this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.removeClass(handle, 'invalid');
-  //         });
-  //     } else {
-  //       this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
-  //       this.selectionBox.nativeElement
-  //         .querySelectorAll('.resize-handle')
-  //         .forEach((handle: HTMLElement) => {
-  //           this.renderer.addClass(handle, 'invalid');
-  //         });
-  //     }
-  // }
-
-  //v1
-  // resizeBox(e: MouseEvent) {
-  //   let newWidth: number;
-  //   let newLeft: number;
-
-  //   if (this.isLeftHandle) {
-  //     const delta = this.startX - e.pageX;
-  //     newWidth = Math.max(30, this.startWidth + delta);
-  //     newLeft = Math.max(0, this.startLeft - delta);
-
-  //     if (newLeft + newWidth <= this.timelineTrack.nativeElement.offsetWidth) {
-  //       this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //       this.selectionBox.nativeElement.style.left = `${newLeft}px`;
-  //     }
-  //   } else {
-  //     const delta = e.pageX - this.startX;
-  //     newWidth = Math.max(30, this.startWidth + delta);
-  //     newLeft = this.startLeft;
-
-  //     if (
-  //       this.startLeft + newWidth <=
-  //       this.timelineTrack.nativeElement.offsetWidth
-  //     ) {
-  //       this.selectionBox.nativeElement.style.width = `${newWidth}px`;
-  //     }
-  //   }
-
-  //   // Verificar disponibilidad y actualizar duración
-  //   this.isRangeAvailable = this.checkRangeAvailability(newLeft, newWidth);
-  //   this.durationLabel.nativeElement.style.left = `${
-  //     newLeft + newWidth / 2 - 20
-  //   }px`;
-  //   this.updateDurationLabel();
-
-  //   if (this.isRangeAvailable) {
-  //     this.renderer.removeClass(this.selectionBox.nativeElement, 'invalid');
-  //   } else {
-  //     this.renderer.addClass(this.selectionBox.nativeElement, 'invalid');
-  //   }
-  // }
-
-  // Nueva
+  // v1
   private checkRangeAvailability(newLeft: number, width: number): boolean {
     const selectionStart = newLeft;
     const selectionEnd = newLeft + width;
@@ -615,7 +424,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     });
   }
 
-  calculateSelectedRange() {
+  public calculateSelectedRange() {
     const selectionBox = this.selectionBox.nativeElement;
     const startPixels = selectionBox.offsetLeft;
     const endPixels = startPixels + selectionBox.offsetWidth;
@@ -652,8 +461,8 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
       const minutesInTimeline = (this.endHour - this.startHour) * 60;
       const tenMinutesWidth = Math.floor(
-        (10 / minutesInTimeline) * timelineWidth
-      ); // Restar 3 para mejorar la precisión
+        (10 / minutesInTimeline) * timelineWidth - 5
+      ); // Restar 5 para mejorar la precisión en la carga   inicial
 
       // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
       this.renderer.setStyle(
@@ -692,127 +501,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     }
   }
 
-  //v3
-  //   private setInitialSelectionBoxPosition() {
-  //     if (this.timeRanges.length > 0) {
-  //         const firstRange = this.timeRanges[0];
-
-  //         const startPixels = this.convertTimeToPixels(firstRange.startTime);
-
-  //         // Calcula el ancho en píxeles para 10 minutos y redondea hacia abajo
-  //         const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-  //         const minutesInTimeline = (this.endHour - this.startHour) * 60;
-  //         const tenMinutesWidth = Math.floor((10 / minutesInTimeline) * timelineWidth);
-
-  //         // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
-  //         this.renderer.setStyle(
-  //             this.selectionBox.nativeElement,
-  //             'left',
-  //             `${startPixels}px`
-  //         );
-  //         this.renderer.setStyle(
-  //             this.selectionBox.nativeElement,
-  //             'width',
-  //             `${tenMinutesWidth}px`
-  //         );
-
-  //         // Asegurar que isRangeAvailable sea verdadero
-  //         this.isRangeAvailable = true;
-
-  //         // Actualizar el valor de duration-label al cargar el componente
-  //         this.updateDurationLabel();
-
-  //         this.durationLabel.nativeElement.style.left = `${
-  //             startPixels + tenMinutesWidth / 2 - 20
-  //         }px`;
-  //     }
-  // }
-
-  //v2
-  //   private setInitialSelectionBoxPosition() {
-  //     if (this.timeRanges.length > 0) {
-  //         const firstRange = this.timeRanges[0];
-
-  //         const startPixels = this.convertTimeToPixels(firstRange.startTime);
-
-  //         // Calcula el ancho en píxeles para 10 minutos
-  //         const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-  //         const minutesInTimeline = (this.endHour - this.startHour) * 60;
-  //         const tenMinutesWidth = (10 / minutesInTimeline) * timelineWidth;
-
-  //         // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
-  //         this.renderer.setStyle(
-  //             this.selectionBox.nativeElement,
-  //             'left',
-  //             `${startPixels}px`
-  //         );
-  //         this.renderer.setStyle(
-  //             this.selectionBox.nativeElement,
-  //             'width',
-  //             `${tenMinutesWidth}px`
-  //         );
-
-  //         // Asegurar que isRangeAvailable sea verdadero
-  //         this.isRangeAvailable = true;
-
-  //         // Actualizar el valor de duration-label al cargar el componente
-  //         this.updateDurationLabel();
-
-  //         this.durationLabel.nativeElement.style.left = `${
-  //             startPixels + tenMinutesWidth / 2 - 20
-  //         }px`;
-  //     }
-  // }
-
-  // V1
-  /**
-   * Sets the initial position and size of the selection box based on the first time range.
-   *
-   * This method performs the following actions:
-   * - Calculates the pixel positions for the start and end times of the first time range.
-   * - Positions the selection box at the calculated start position and sets its width.
-   * - Ensures that the `isRangeAvailable` flag is set to true.
-   * - Updates the duration label to reflect the current selection.
-   * - Positions the duration label at the center of the selection box.
-   *
-   * Preconditions:
-   * - `this.timeRanges` must contain at least one time range.
-   * - `this.convertTimeToPixels` must be a valid method that converts a time value to pixel position.
-   * - `this.renderer` must be a valid Angular Renderer2 instance.
-   * - `this.selectionBox` and `this.durationLabel` must be valid ElementRef instances.
-   */
-  // private setInitialSelectionBoxPosition() {
-  //   if (this.timeRanges.length > 0) {
-  //     const firstRange = this.timeRanges[0];
-
-  //     const startPixels = this.convertTimeToPixels(firstRange.startTime);
-  //     const endPixels = this.convertTimeToPixels(firstRange.endTime);
-  //     const width = endPixels - startPixels; // Restar 6 para mejorar la precisión
-
-  //     // Posicionar el selection-box en el primer rango válido
-  //     this.renderer.setStyle(
-  //       this.selectionBox.nativeElement,
-  //       'left',
-  //       `${startPixels}px`
-  //     );
-  //     this.renderer.setStyle(
-  //       this.selectionBox.nativeElement,
-  //       'width',
-  //       `${width}px`
-  //     );
-
-  //     // Asegurar que isRangeAvailable sea verdadero
-  //     this.isRangeAvailable = true;
-
-  //     // Actualizar el valor de duration-label al cargar el componente
-  //     this.updateDurationLabel();
-
-  //     this.durationLabel.nativeElement.style.left = `${
-  //       startPixels + width / 2 - 20
-  //     }px`;
-  //   }
-  // }
-
   private calculateSelectionDuration(): number {
     const width = this.selectionBox.nativeElement.offsetWidth;
     return this.convertPixelsToMinutes(width);
@@ -826,7 +514,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   //v1
   private updateDurationLabel() {
-     this.duration = Math.round(this.calculateSelectionDuration());
+    this.duration = Math.round(this.calculateSelectionDuration());
 
     this.durationLabel.nativeElement.innerText = `${this.duration} min`;
     this.sharedService.changeMessage(this.duration.toString());

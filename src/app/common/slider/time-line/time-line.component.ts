@@ -55,7 +55,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.generateHoursRange(); // Usa las propiedades configurables
-    this.getShareLineSliderComponent();
+    this.getShareLineSliderComponent();// Observable para tener siempre el cambio entre slider line y timerange
   }
 
   ngAfterViewInit() {
@@ -450,7 +450,8 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     return `${this.padTime(hours)}:${this.padTime(minutes)}`;
   }
 
-  //v4
+
+  //v5
   private setInitialSelectionBoxPosition() {
     if (this.timeRanges.length > 0) {
       const firstRange = this.timeRanges[0];
@@ -458,14 +459,14 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       // Convertir el tiempo inicial a píxeles
       const startPixels = this.convertTimeToPixels(firstRange.startTime);
 
-      // Calcular el ancho en píxeles para un rango de 10 minutos
+      // Calcular el ancho en píxeles para un rango de 2 minutos
       const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
       const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
-      const tenMinutesWidth = Math.floor(
-        (10 / minutesInTimeline) * timelineWidth - 6
-      ); // Restar 5 para mejorar la precisión en la carga   inicial
+      const twoMinutesWidth = Math.floor(
+        (2 / minutesInTimeline) * timelineWidth
+      ); // Restar 6 para mejorar la precisión en la carga inicial
 
-      // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
+      // Posicionar el selection-box en el primer rango válido y con un ancho de 2 minutos
       this.renderer.setStyle(
         this.selectionBox.nativeElement,
         "left",
@@ -474,7 +475,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       this.renderer.setStyle(
         this.selectionBox.nativeElement,
         "width",
-        `${tenMinutesWidth}px`
+        `${twoMinutesWidth}px`
       );
 
       // Asegurar que isRangeAvailable sea verdadero
@@ -485,22 +486,75 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
       // Posicionar el duration label en el centro del selection box
       this.durationLabel.nativeElement.style.left = `${
-        startPixels + tenMinutesWidth / 2 - 20
+        startPixels + twoMinutesWidth / 2 - 20
       }px`;
 
       // Configurar el rango de tiempo inicial para mostrarlo en el HTML
       const startTimeStr = this.convertPixelsToTime(startPixels);
       const endTimeStr = this.convertPixelsToTime(
-        startPixels + tenMinutesWidth
+        startPixels + twoMinutesWidth
       );
       const startTime = new Date(`1970-01-01T${startTimeStr}:00`);
       const endTime = new Date(`1970-01-01T${endTimeStr}:00`);
-      // Se crea este settime out por que la fecha se debe rendirizar despues this.ngAfterViewInit
+
+      // Se crea este setTimeout porque la fecha se debe renderizar después de this.ngAfterViewInit
       setTimeout(() => {
         this.updateSelectedRange(startTime, endTime);
       }, 2000);
     }
   }
+
+  //v4
+  // private setInitialSelectionBoxPosition() {
+  //   if (this.timeRanges.length > 0) {
+  //     const firstRange = this.timeRanges[0];
+
+  //     // Convertir el tiempo inicial a píxeles
+  //     const startPixels = this.convertTimeToPixels(firstRange.startTime);
+
+  //     // Calcular el ancho en píxeles para un rango de 10 minutos
+  //     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
+  //     const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
+  //     const tenMinutesWidth = Math.floor(
+  //       (10 / minutesInTimeline) * timelineWidth - 6
+  //     ); // Restar 5 para mejorar la precisión en la carga   inicial
+
+  //     // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
+  //     this.renderer.setStyle(
+  //       this.selectionBox.nativeElement,
+  //       "left",
+  //       `${startPixels}px`
+  //     );
+  //     this.renderer.setStyle(
+  //       this.selectionBox.nativeElement,
+  //       "width",
+  //       `${tenMinutesWidth}px`
+  //     );
+
+  //     // Asegurar que isRangeAvailable sea verdadero
+  //     this.isRangeAvailable = true;
+
+  //     // Actualizar el valor de duration-label al cargar el componente
+  //     this.updateDurationLabel();
+
+  //     // Posicionar el duration label en el centro del selection box
+  //     this.durationLabel.nativeElement.style.left = `${
+  //       startPixels + tenMinutesWidth / 2 - 20
+  //     }px`;
+
+  //     // Configurar el rango de tiempo inicial para mostrarlo en el HTML
+  //     const startTimeStr = this.convertPixelsToTime(startPixels);
+  //     const endTimeStr = this.convertPixelsToTime(
+  //       startPixels + tenMinutesWidth
+  //     );
+  //     const startTime = new Date(`1970-01-01T${startTimeStr}:00`);
+  //     const endTime = new Date(`1970-01-01T${endTimeStr}:00`);
+  //     // Se crea este settime out por que la fecha se debe rendirizar despues this.ngAfterViewInit
+  //     setTimeout(() => {
+  //       this.updateSelectedRange(startTime, endTime);
+  //     }, 2000);
+  //   }
+  // }
 
   private calculateSelectionDuration(): number {
     const width = this.selectionBox.nativeElement.offsetWidth;

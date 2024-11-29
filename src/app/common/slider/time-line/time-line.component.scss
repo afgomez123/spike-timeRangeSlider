@@ -24,7 +24,8 @@ $border-thick: 3px solid;
 $border-thin: 2px solid;
 
 // Variables de sombra
-$box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.4);
+$box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2),
+  0 0 10px rgba(255, 215, 0, 0.4);
 /* Contenedor principal */
 .timeline {
   width: 100%;
@@ -34,26 +35,25 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   overflow-x: scroll; /* El scrollbar solo aparecerá si es necesario */
   height: 106px;
   max-width: fit-content;
-  }
+}
 
 .timeline::-webkit-scrollbar {
   height: 10px; /* Altura inicial del scrollbar: oculto */
-   transition: height 0.3s ease; /* Transición para mostrar el scrollbar */
-  background: $color-light-gray/* Color del thumb */
+  transition: height 0.3s ease; /* Transición para mostrar el scrollbar */
+  background: $color-light-gray; /* Color del thumb */
 }
 
 .timeline:hover::-webkit-scrollbar {
   height: 10px; /* Altura del scrollbar al pasar el mouse */
-
 }
 
 .timeline::-webkit-scrollbar-thumb {
-  background:#cac6c6; /* Color del thumb */
+  background: #cac6c6; /* Color del thumb */
   border-radius: 10px; /* Bordes redondeados */
 }
 
 .timeline::-webkit-scrollbar-thumb:hover {
-  background:#cac6c6; /* Color del thumb */
+  background: #cac6c6; /* Color del thumb */
   border-radius: 10px; /* Bordes redondeados */
   cursor: pointer; /* Cambia el cursor al pasar el mouse */
 }
@@ -149,7 +149,7 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   width: 40px;
   height: 34px;
   background-color: transparent;
-  border: $border-thick $color-yellow;
+  border: $border-thick $color-blue;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -160,26 +160,22 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
 
 // Validations
 .selection-box.invalid {
-  border: $border-thick $color-blue;
+  border: $border-thick $color-yellow;
 }
 
 .selection-box.invalid .resize-handle {
-  border-color: $color-blue;
+  border-color: $color-yellow;
 }
 
 .error-message {
-
   display: flex;
-padding: 4px;
-align-items: flex-start;
-gap: 16px;
-align-self: stretch;
-  background-color: #FFF9EB;
-  // margin-top: 10px;
-  // color: $color-red;
-  // font-size: 12px;
+  padding: 4px;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+  background-color: #fff9eb;
   color: #000;
-  font-feature-settings: 'liga' off, 'clig' off;
+  font-feature-settings: "liga" off, "clig" off;
   /* Desktop/Caption/Medium Regular */
   font-family: Roboto;
   font-size: 12px;
@@ -195,7 +191,7 @@ align-self: stretch;
   width: 3px;
   height: 29px;
   background-color: #fff;
-  border: $border-thick $color-yellow;
+  border: $border-thick $color-blue;
   border-radius: 4px 29px 20px -10px;
   cursor: ew-resize;
 }

@@ -9,7 +9,7 @@
     >
   </div>
 </section>
-<div class="timeline">
+<div class="timeline" (scroll)="onScrollTimeline($event)">
   <div class="hours">
     <div class="hour" *ngFor="let hour of hours">{{ hour }}</div>
   </div>

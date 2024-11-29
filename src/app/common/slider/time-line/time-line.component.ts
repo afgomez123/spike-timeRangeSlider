@@ -32,6 +32,10 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   @ViewChild("selectionBox") selectionBox!: ElementRef;
   @ViewChild("durationLabel") durationLabel!: ElementRef;
   @ViewChild("timelineTrack") timelineTrack!: ElementRef;
+  @ViewChild("timeline", { static: true }) timeline!: ElementRef;
+
+  // Variable para rastrear la última posición del scroll
+  private lastScrollLeft: number = 0;
 
   isDragging = false;
   isResizing = false;
@@ -55,7 +59,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.generateHoursRange(); // Usa las propiedades configurables
-    this.getShareLineSliderComponent();// Observable para tener siempre el cambio entre slider line y timerange
+    this.getShareLineSliderComponent(); // Observable para tener siempre el cambio entre slider line y timerange
   }
 
   ngAfterViewInit() {
@@ -69,7 +73,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     this.sharedService.currentMessage
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((message) => {
-
         if (message && message !== this.duration.toString()) {
           console.log(
             "Mensaje recibido en LineSliderComponent: if",
@@ -82,6 +85,45 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
           }
         }
       });
+  }
+
+  onScrollTimeline(event: Event): void {
+    this.isRangeAvailable = false;
+    const scrollLeft = (event.target as HTMLElement).scrollLeft;
+
+    // Determinar la dirección del scroll
+    const direction = scrollLeft > this.lastScrollLeft ? "right" : "left";
+
+    // Obtén la posición actual del selection-box en píxeles
+    const currentLeft = this.selectionBox.nativeElement.offsetLeft;
+    let newLeft = currentLeft;
+
+    if (direction === "right") {
+      // Si el scroll va hacia la derecha (tu derecha), mueve el selection-box hacia la derecha visualmente
+      newLeft = currentLeft + (scrollLeft - this.lastScrollLeft);
+    } else if (direction === "left") {
+      // Si el scroll va hacia la izquierda (tu izquierda), mueve el selection-box hacia la izquierda visualmente
+      newLeft = currentLeft - (this.lastScrollLeft - scrollLeft);
+    }
+
+    // Asegúrate de que el cuadro no se salga de los límites del timeline
+    const maxLeft = this.timelineTrack.nativeElement.offsetWidth - this.selectionBox.nativeElement.offsetWidth;
+    const constrainedLeft = Math.min(Math.max(newLeft, 0), maxLeft);
+
+    // Actualiza la posición del selection-box
+    this.renderer.setStyle(this.selectionBox.nativeElement, "left", `${constrainedLeft}px`);
+
+    // Actualiza también la posición del duration label
+    this.durationLabel.nativeElement.style.left = `${
+      constrainedLeft + this.selectionBox.nativeElement.offsetWidth / 2 - 20
+    }px`;
+
+    // Actualiza la duración y el rango seleccionado
+    // this.updateDurationLabel();
+
+    // Almacena el valor actual de scrollLeft para el próximo evento
+    this.lastScrollLeft = scrollLeft;
+
   }
 
   //v1
@@ -120,8 +162,9 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   }
 
   private calculateTimelineWidth(): string {
-    const totalIntervals =
-      Math.ceil(((this.endHour - this.startHour) * 60) / this.interval);
+    const totalIntervals = Math.ceil(
+      ((this.endHour - this.startHour) * 60) / this.interval
+    );
     const pixelsPerInterval = 65; // Ajusta el espacio entre intervalos aquí
     const trackWidth = totalIntervals * pixelsPerInterval;
     return `${trackWidth}px`;
@@ -410,7 +453,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     }
   }
 
-
   // v1
   private checkRangeAvailability(newLeft: number, width: number): boolean {
     const selectionStart = newLeft;
@@ -449,7 +491,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
     return `${this.padTime(hours)}:${this.padTime(minutes)}`;
   }
-
 
   //v5
   private setInitialSelectionBoxPosition() {

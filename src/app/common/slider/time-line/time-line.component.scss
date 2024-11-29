@@ -166,9 +166,25 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
 }
 
 .error-message {
-  margin-top: 10px;
-  color: $color-red;
+
+  display: flex;
+padding: 4px;
+align-items: flex-start;
+gap: 16px;
+align-self: stretch;
+  background-color: #FFF9EB;
+  // margin-top: 10px;
+  // color: $color-red;
+  // font-size: 12px;
+  color: #000;
+  font-feature-settings: 'liga' off, 'clig' off;
+  /* Desktop/Caption/Medium Regular */
+  font-family: Roboto;
   font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px; /* 133.333% */
+  letter-spacing: 0.5px;
 }
 // end validations
 

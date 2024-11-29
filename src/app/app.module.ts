@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TimeLineComponent } from './common/slider/time-line/time-line.component';
-import { NgxTimeSliderComponent } from './common/slider/ngx-time-slider/ngx-time-slider.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +13,6 @@ import { LineSliderComponent } from './common/slider/line-slider/line-slider.com
   declarations: [
     AppComponent,
     TimeLineComponent,
-    NgxTimeSliderComponent,
     LineSliderComponent
   ],
   imports: [

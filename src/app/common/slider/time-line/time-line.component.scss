@@ -32,26 +32,28 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.
   position: relative;
   font-family: $font-primary;
   overflow-x: scroll; /* El scrollbar solo aparecerá si es necesario */
-  height: 120px;
+  height: 106px;
   max-width: fit-content;
   }
 
 .timeline::-webkit-scrollbar {
   height: 10px; /* Altura inicial del scrollbar: oculto */
    transition: height 0.3s ease; /* Transición para mostrar el scrollbar */
+  background: $color-light-gray/* Color del thumb */
 }
 
 .timeline:hover::-webkit-scrollbar {
   height: 10px; /* Altura del scrollbar al pasar el mouse */
+
 }
 
 .timeline::-webkit-scrollbar-thumb {
-  background: #b3d7ff; /* Color del thumb */
+  background:#cac6c6; /* Color del thumb */
   border-radius: 10px; /* Bordes redondeados */
 }
 
 .timeline::-webkit-scrollbar-thumb:hover {
-  background: #b3d7ff; /* Color del thumb */
+  background:#cac6c6; /* Color del thumb */
   border-radius: 10px; /* Bordes redondeados */
   cursor: pointer; /* Cambia el cursor al pasar el mouse */
 }

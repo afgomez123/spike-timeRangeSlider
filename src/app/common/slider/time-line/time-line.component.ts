@@ -87,16 +87,16 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   //v1
   private resizeSelectionBoxByNumber(number: number) {
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-    const minutesInTimeline = (this.endHour - this.startHour) * 60;
+    const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
 
     // Calcula el ancho en píxeles correspondiente al número dado
     const newWidthInMinutes = number; // Número de minutos para redimensionar
     const newWidthInPixels =
-      (newWidthInMinutes / minutesInTimeline) * timelineWidth;
+      (newWidthInMinutes / minutesInTimeline) * timelineWidth - 6;
 
     // Obtén la posición actual del selection box
     const currentLeft = this.selectionBox.nativeElement.offsetLeft;
-    const maxWidth = timelineWidth - currentLeft + 5; // Máximo ancho permitido hacia la derecha
+    const maxWidth = timelineWidth - currentLeft + this.interval; // Máximo ancho permitido hacia la derecha
 
     // Asegúrate de que el ancho no exceda el límite derecho de la línea de tiempo
     const constrainedWidth = Math.min(newWidthInPixels, maxWidth);
@@ -121,7 +121,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   private calculateTimelineWidth(): string {
     const totalIntervals =
-      ((this.endHour - this.startHour) * 60) / this.interval;
+      Math.ceil(((this.endHour - this.startHour) * 60) / this.interval);
     const pixelsPerInterval = 65; // Ajusta el espacio entre intervalos aquí
     const trackWidth = totalIntervals * pixelsPerInterval;
     return `${trackWidth}px`;
@@ -219,7 +219,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     const totalMinutes = hours * 60 + minutes;
     const startOfTimeline = this.startHour * 60; // Inicio dinámico del timeline
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-    const minutesInTimeline = (this.endHour - this.startHour) * 60; // Duración total en minutos
+    const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60); // Duración total en minutos
 
     return (
       ((totalMinutes - startOfTimeline) / minutesInTimeline) * timelineWidth
@@ -339,18 +339,19 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   //v4
   private resizeBox(e: MouseEvent) {
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-    const minutesInTimeline = (this.endHour - this.startHour) * 60;
+    const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
 
     // Cálculo de los píxeles mínimos y máximos en función del intervalo de tiempo
     const minTime = 1; // Mínimo tiempo en minutos permitido
     const maxTime = 10; // Máximo tiempo en minutos permitido
     const minWidthInPixels = (minTime / minutesInTimeline) * timelineWidth;
-    const maxWidthInPixels = (maxTime / minutesInTimeline) * timelineWidth;
+    const maxWidthInPixels = (maxTime / minutesInTimeline) * timelineWidth - 6;
 
-    let newWidth: number;
-    let newLeft: number;
+    let newWidth = this.startWidth; // Asignación inicial para evitar errores
+    let newLeft = this.startLeft; // Asignación inicial para evitar errores
 
     if (this.isLeftHandle) {
+      // Amplía hacia la izquierda
       const delta = this.startX - e.pageX;
       newWidth = Math.max(
         minWidthInPixels,
@@ -358,22 +359,21 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       );
       newLeft = Math.max(0, this.startLeft - delta);
 
-      if (newLeft + newWidth <= this.timelineTrack.nativeElement.offsetWidth) {
-        this.selectionBox.nativeElement.style.width = `${newWidth}px`;
+      // Asegúrate de que no se salga del límite izquierdo y actualiza `left` y `width`
+      if (newLeft >= 0 && newLeft + newWidth <= timelineWidth) {
         this.selectionBox.nativeElement.style.left = `${newLeft}px`;
+        this.selectionBox.nativeElement.style.width = `${newWidth}px`;
       }
     } else {
+      // Amplía hacia la derecha
       const delta = e.pageX - this.startX;
       newWidth = Math.max(
         minWidthInPixels,
         Math.min(this.startWidth + delta, maxWidthInPixels)
       );
-      newLeft = this.startLeft;
 
-      if (
-        this.startLeft + newWidth <=
-        this.timelineTrack.nativeElement.offsetWidth
-      ) {
+      // Asegúrate de que no se salga del límite derecho y actualiza `width`
+      if (this.startLeft + newWidth <= timelineWidth) {
         this.selectionBox.nativeElement.style.width = `${newWidth}px`;
       }
     }
@@ -410,6 +410,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     }
   }
 
+
   // v1
   private checkRangeAvailability(newLeft: number, width: number): boolean {
     const selectionStart = newLeft;
@@ -439,7 +440,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   private convertPixelsToTime(pixels: number): string {
     const startOfTimeline = this.startHour * 60; // Inicio dinámico del timeline
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-    const minutesInTimeline = (this.endHour - this.startHour) * 60; // Duración total en minutos
+    const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60); // Duración total en minutos
 
     const totalMinutes =
       startOfTimeline + (pixels / timelineWidth) * minutesInTimeline;
@@ -459,9 +460,9 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
       // Calcular el ancho en píxeles para un rango de 10 minutos
       const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-      const minutesInTimeline = (this.endHour - this.startHour) * 60;
+      const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
       const tenMinutesWidth = Math.floor(
-        (10 / minutesInTimeline) * timelineWidth - 5
+        (10 / minutesInTimeline) * timelineWidth - 6
       ); // Restar 5 para mejorar la precisión en la carga   inicial
 
       // Posicionar el selection-box en el primer rango válido y con un ancho de 10 minutos
@@ -508,7 +509,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
 
   private convertPixelsToMinutes(pixels: number): number {
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
-    const minutesInTimeline = (this.endHour - this.startHour) * 60;
+    const minutesInTimeline = Math.ceil((this.endHour - this.startHour) * 60);
     return (pixels / timelineWidth) * minutesInTimeline;
   }
 

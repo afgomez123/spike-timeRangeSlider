@@ -16,6 +16,8 @@
     >
   </div>
 </section>
+<!-- Esta linea es para usar el scroll -->
+<!-- <div class="timeline" (scroll)="onScrollTimeline($event)"> -->
 <div class="timeline">
   <div class="hours">
     <div class="hour" *ngFor="let hour of hours">{{ hour }}</div>
@@ -26,6 +28,7 @@
       *ngFor="let range of timeRanges"
       class="time-block"
       [ngStyle]="{ width: range.width, left: range.left }"
+      (dblclick)="onBlockClick(range)"
     >
       <!-- {{ range.startTime }} - {{ range.endTime }} -->
     </div>

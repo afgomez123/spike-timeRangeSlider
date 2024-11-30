@@ -198,6 +198,7 @@ $box-shadow-default: 0 4px 6px rgba(0, 0, 0, 0.2),
 
 /* Duración en minutos bajo el cuadro */
 .duration-label {
+  width: max-content;
   bottom: 0px;
   position: absolute;
   font-size: $font-size-small;

@@ -32,7 +32,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
   @ViewChild("selectionBox") selectionBox!: ElementRef;
   @ViewChild("durationLabel") durationLabel!: ElementRef;
   @ViewChild("timelineTrack") timelineTrack!: ElementRef;
-  @ViewChild("timeline", { static: true }) timeline!: ElementRef;
+  @ViewChild("timeline") timeline!: ElementRef;
 
   // Variable para rastrear la última posición del scroll
   private lastScrollLeft: number = 0;
@@ -68,6 +68,46 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     this.calculateTimeBlockPositions(); // Calcula posiciones con los bloques recibidos
     this.setInitialSelectionBoxPosition(); // inactiva provision
   }
+
+  onScrollTimeline(event: Event): void {
+    this.isRangeAvailable = false;
+    const scrollLeft = (event.target as HTMLElement).scrollLeft;
+
+    // Determinar la dirección del scroll
+    const direction = scrollLeft > this.lastScrollLeft ? "right" : "left";
+
+    // Obtén la posición actual del selection-box en píxeles
+    const currentLeft = this.selectionBox.nativeElement.offsetLeft;
+    let newLeft = currentLeft;
+
+    if (direction === "right") {
+      // Si el scroll va hacia la derecha (tu derecha), mueve el selection-box hacia la derecha visualmente
+      newLeft = currentLeft + (scrollLeft - this.lastScrollLeft);
+    } else if (direction === "left") {
+      // Si el scroll va hacia la izquierda (tu izquierda), mueve el selection-box hacia la izquierda visualmente
+      newLeft = currentLeft - (this.lastScrollLeft - scrollLeft);
+    }
+
+    // Asegúrate de que el cuadro no se salga de los límites del timeline
+    const maxLeft = this.timelineTrack.nativeElement.offsetWidth - this.selectionBox.nativeElement.offsetWidth;
+    const constrainedLeft = Math.min(Math.max(newLeft, 0), maxLeft);
+
+    // Actualiza la posición del selection-box
+    this.renderer.setStyle(this.selectionBox.nativeElement, "left", `${constrainedLeft}px`);
+
+    // Actualiza también la posición del duration label
+    this.durationLabel.nativeElement.style.left = `${
+      constrainedLeft + this.selectionBox.nativeElement.offsetWidth / 2 - 20
+    }px`;
+
+    // Actualiza la duración y el rango seleccionado
+    // this.updateDurationLabel();
+
+    // Almacena el valor actual de scrollLeft para el próximo evento
+    this.lastScrollLeft = scrollLeft;
+
+  }
+
 
   private getShareLineSliderComponent() {
     this.sharedService.currentMessage
@@ -453,6 +493,42 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
     return `${this.padTime(hours)}:${this.padTime(minutes)}`;
   }
 
+  onBlockClick(range: TimeRange): void {
+    this.isRangeAvailable = false;
+    // Convierte el tiempo de inicio del bloque a píxeles
+    const blockStartPixels = this.convertTimeToPixels(range.startTime);
+
+    // Establece la posición inicial del drag al inicio del bloque
+    this.renderer.setStyle(
+      this.selectionBox.nativeElement,
+      'left',
+      `${blockStartPixels}px`
+    );
+
+    // Opcional: Actualiza también la duración si deseas que abarque todo el bloque
+    // const blockWidth = parseInt(range.width || '0', 10);
+    // this.renderer.setStyle(
+    //   this.selectionBox.nativeElement,
+    //   'width',
+    //   `${blockWidth}px`
+    // );
+
+    // Actualiza el rango seleccionado
+    const startTime = new Date(`1970-01-01T${range.startTime}:00`);
+    const endTime = new Date(`1970-01-01T${range.endTime}:00`);
+    this.updateSelectedRange(startTime, endTime);
+
+    // Actualiza el duration label
+    const labelLeft =
+      blockStartPixels + this.selectionBox.nativeElement.offsetWidth / 2 - 20;
+    this.renderer.setStyle(
+      this.durationLabel.nativeElement,
+      'left',
+      `${labelLeft}px`
+    );
+  }
+
+
   //v5
   private setInitialSelectionBoxPosition() {
     if (this.timeRanges.length > 0) {
@@ -468,7 +544,7 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
         (2 / minutesInTimeline) * timelineWidth
       ); // Restar 6 para mejorar la precisión en la carga inicial
 
-      // Posicionar el selection-box en el primer rango válido y con un ancho de 2 minutos
+      //Posicionar el selection-box en el primer rango válido y con un ancho de 2 minutos
       this.renderer.setStyle(
         this.selectionBox.nativeElement,
         "left",

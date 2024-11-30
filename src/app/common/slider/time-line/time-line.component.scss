@@ -1,3 +1,11 @@
+* {
+  user-select: none; /* Evita selección en todos los elementos */
+}
+
+.selectable {
+  user-select: text; /* Permite selección solo en áreas específicas */
+}
+
 /* timeline.component.css */
 // Variables de colores
 $color-gray: #666;

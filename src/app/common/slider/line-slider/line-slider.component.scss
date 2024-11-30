@@ -48,10 +48,10 @@
 // Estilos del mat-slider handle
 .mat-mdc-slider.mat-primary {
   --mdc-slider-active-track-color: #4080f8; /* Color para la barra activa (seleccionada) */
-  --mdc-slider-inactive-track-color: #666; /* Color para la barra inactiva (no seleccionada) */
+  --mdc-slider-inactive-track-color: #8CBBFC; /* Color para la barra inactiva (no seleccionada) */
   --mdc-slider-handle-color:  #4080f8; /* Color del handle (el círculo del slider) */
-  --mdc-slider-focus-handle-color: #4080f8; /* Color del handle al enfocarse */
-  --mdc-slider-hover-handle-color:  #4080f8; /* Color del handle al pasar el mouse */
-  --mat-mdc-slider-ripple-color: rgba(76, 104, 175, 0.2); /* Efecto ripple */
-  --mat-mdc-slider-hover-ripple-color: rgba(76, 132, 175, 0.1); /* Ripple al pasar el mouse */
+  --mdc-slider-focus-handle-color: #fff; /* Color del handle al enfocarse */
+  --mdc-slider-hover-handle-color:  #fff; /* Color del handle al pasar el mouse */
+  --mat-mdc-slider-ripple-color: none; /* Efecto ripple */
+  --mat-mdc-slider-hover-ripple-color: none /* Ripple al pasar el mouse */
 }

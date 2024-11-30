@@ -87,45 +87,6 @@ export class TimeLineComponent implements AfterViewInit, OnInit {
       });
   }
 
-  onScrollTimeline(event: Event): void {
-    this.isRangeAvailable = false;
-    const scrollLeft = (event.target as HTMLElement).scrollLeft;
-
-    // Determinar la dirección del scroll
-    const direction = scrollLeft > this.lastScrollLeft ? "right" : "left";
-
-    // Obtén la posición actual del selection-box en píxeles
-    const currentLeft = this.selectionBox.nativeElement.offsetLeft;
-    let newLeft = currentLeft;
-
-    if (direction === "right") {
-      // Si el scroll va hacia la derecha (tu derecha), mueve el selection-box hacia la derecha visualmente
-      newLeft = currentLeft + (scrollLeft - this.lastScrollLeft);
-    } else if (direction === "left") {
-      // Si el scroll va hacia la izquierda (tu izquierda), mueve el selection-box hacia la izquierda visualmente
-      newLeft = currentLeft - (this.lastScrollLeft - scrollLeft);
-    }
-
-    // Asegúrate de que el cuadro no se salga de los límites del timeline
-    const maxLeft = this.timelineTrack.nativeElement.offsetWidth - this.selectionBox.nativeElement.offsetWidth;
-    const constrainedLeft = Math.min(Math.max(newLeft, 0), maxLeft);
-
-    // Actualiza la posición del selection-box
-    this.renderer.setStyle(this.selectionBox.nativeElement, "left", `${constrainedLeft}px`);
-
-    // Actualiza también la posición del duration label
-    this.durationLabel.nativeElement.style.left = `${
-      constrainedLeft + this.selectionBox.nativeElement.offsetWidth / 2 - 20
-    }px`;
-
-    // Actualiza la duración y el rango seleccionado
-    // this.updateDurationLabel();
-
-    // Almacena el valor actual de scrollLeft para el próximo evento
-    this.lastScrollLeft = scrollLeft;
-
-  }
-
   //v1
   private resizeSelectionBoxByNumber(number: number) {
     const timelineWidth = this.timelineTrack.nativeElement.offsetWidth;
